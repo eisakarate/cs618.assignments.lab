@@ -1,13 +1,27 @@
 import PropTypes from 'prop-types'
 import { User } from './User'
-
+import { Link } from 'react-router-dom'
+import slug from 'slug'
 /*
  *.jsx allows embedding of HTML with JavaScript, sort of like Blazor
  */
-export function Post({ title, contents, author: userId, bibliography }) {
+export function Post({
+  title,
+  contents,
+  author: userId,
+  bibliography,
+  _id,
+  fullPost = false,
+}) {
   return (
     <article>
-      <h3>{title}</h3>
+      {fullPost ? (
+        <h3>{title}</h3>
+      ) : (
+        <Link to={`/posts/${_id}/${slug(title)}`}>
+          <h3>{title}</h3>
+        </Link>
+      )}
       <div>{contents}</div>
       {userId && (
         <em>
@@ -32,4 +46,6 @@ Post.propTypes = {
   contents: PropTypes.string,
   author: PropTypes.string,
   bibliography: PropTypes.arrayOf(PropTypes.string),
+  _id: PropTypes.string.isRequired,
+  fullPost: PropTypes.bool,
 }

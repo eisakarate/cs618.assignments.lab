@@ -1,40 +1,27 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Blog } from './pages/Blog.jsx'
-import { Signup } from './pages/Singup.jsx'
-import { Login } from './pages/login.jsx'
 import { AuthContextProvider } from './contexts/AuthContext.jsx'
 
 //import router
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import PropTypes from 'prop-types'
 
-// create a query client
+import { HelmetProvider } from 'react-helmet-async'
+
 const queryClient = new QueryClient()
-
 //define routes
-const router = createBrowserRouter([
-  {
-    path: '/', //root of the application
-    element: <Blog />, //got othe "blog" component
-  },
-  {
-    path: `/signup`, //set the route
-    element: <Signup />, //display the signup page
-  },
-  {
-    path: `/login`, //set the route
-    element: <Login />, //display the signup page
-  },
-])
 
-export function App() {
+export function App({ children }) {
+  //childre is passed to the application - coming from the server
   return (
     //wrap the authentication provider with query-engine
     //wrap the route provider with authentication provider
     //call router provider instead of the <blog/> component directly
-    <QueryClientProvider client={queryClient}>
-      <AuthContextProvider>
-        <RouterProvider router={router} />
-      </AuthContextProvider>
-    </QueryClientProvider>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthContextProvider>{children}</AuthContextProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
   )
+}
+App.propTypes = {
+  children: PropTypes.element.isRequired,
 }

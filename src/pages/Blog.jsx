@@ -6,7 +6,8 @@ import { PostSorting } from '../components/PostSorting.jsx'
 import { useQuery } from '@tanstack/react-query'
 import { getPosts } from '../api/posts.js'
 
-import { Header } from '../components/header.jsx'
+//for tab title update
+import { Helmet } from 'react-helmet-async'
 
 //create state to hold information on the client-side
 import { useState } from 'react' //author filter, sorting, order
@@ -28,7 +29,13 @@ export function Blog() {
 
   return (
     <div style={{ padding: 8 }}>
-      <Header />
+      <Helmet>
+        <title>Full Stack Pancake Blog</title>
+        <meta
+          name='description'
+          content='A blog full of articles about full-stack React development.'
+        />
+      </Helmet>
       <CreatePost />
       <br />
       <hr />
