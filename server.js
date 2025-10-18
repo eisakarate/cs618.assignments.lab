@@ -98,6 +98,7 @@ async function createDevServer() {
   return app
 }
 
+//uncomment to submit
 const action = 'DEBUG'
 if (action == 'Prod') {
   const app = await createProdServer()
@@ -106,6 +107,7 @@ if (action == 'Prod') {
   const app2 = await createDevServer()
   app2.listen(3000, () => console.log('foo'))
 }
+
 // //read from the Environment Variable
 // if (process.env.NODE_ENV === 'production') {
 //   const app = await createProdServer()

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../contexts/AuthContext.jsx'
 import { User } from './User.jsx'
 
 //setup a header link

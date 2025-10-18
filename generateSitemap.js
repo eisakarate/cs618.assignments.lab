@@ -2,8 +2,9 @@ import slug from 'slug'
 import dotenv from 'dotenv'
 dotenv.config()
 
-//const baseUrl = process.env.FRONTEND_URL
+//uncomment to submit
 const baseUrl = ''
+//const baseUrl = process.env.FRONTEND_URL
 
 export async function generateSitemap() {
   const postsRequest = await fetch(`${import.meta.env.VITE_BACKEND_URL}/posts`)

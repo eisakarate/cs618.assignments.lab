@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getPosts } from '../api/posts.js'
 
 //for tab title update
+import { Header } from '../components/Header.jsx'
 import { Helmet } from 'react-helmet-async'
 
 //create state to hold information on the client-side
@@ -36,6 +37,7 @@ export function Blog() {
           content='A blog full of articles about full-stack React development.'
         />
       </Helmet>
+      <Header />
       <CreatePost />
       <br />
       <hr />

@@ -6,6 +6,7 @@ import express from 'express'
 
 import { postsRouts } from './routes/posts.js'
 import { userRoutes } from './routes/users.js'
+import { eventRoutes } from './routes/events.js'
 
 import bodyParser from 'body-parser'
 
@@ -41,6 +42,7 @@ app.use(cors())
 //define routes
 postsRouts(app)
 userRoutes(app)
+eventRoutes(app)
 
 //define a route (root)
 app.get('/', (req, res) => {

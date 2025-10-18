@@ -1,10 +1,17 @@
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { useQuery } from '@tanstack/react-query'
+
+import { useEffect, useState } from 'react'
+import { useQuery, useMutation } from '@tanstack/react-query'
+
 import { Helmet } from 'react-helmet-async'
+import { Header } from '../components/Header.jsx'
 import { Post } from '../components/Post.jsx'
 import { getPostById } from '../api/posts.js'
 import { getUserInfo } from '../api/users.js'
+import { postTrackEvent } from '../api/events.js'
+
+import { PostStats } from '../components/PostStats.jsx'
 
 function truncate(str, max = 160) {
   if (!str) return str
@@ -16,6 +23,27 @@ function truncate(str, max = 160) {
 }
 
 export function ViewPost({ postId }) {
+  //add session state
+  const [session, setSession] = useState() //keep track when a user opens a page, this will start a interaction session
+
+  //add a mutator, create new event on the backend w/ the postid and action, and session
+  const trackEventMutation = useMutation({
+    mutationFn: (action) => postTrackEvent({ postId, action, session }),
+    onSuccess: (data) => setSession(data?.session),
+  })
+
+  //cause an effect
+  useEffect(() => {
+    let timeout = setTimeout(() => {
+      trackEventMutation.mutate('startView') //start tracking an event, we'll set the action as "startView"
+      timeout = null
+    }, 1000) //after 1 second
+    return () => {
+      if (timeout) clearTimeout(timeout)
+      else trackEventMutation.mutate('endView') //if a user leaves a page, end view
+    }
+  }, [])
+
   const postQuery = useQuery({
     queryKey: ['post', postId],
     queryFn: () => getPostById(postId),
@@ -45,12 +73,21 @@ export function ViewPost({ postId }) {
           ))}
         </Helmet>
       )}
+      <Header />
       <br />
       <hr />
       <Link to='/'>Back to main page</Link>
       <br />
       <hr />
-      {post ? <Post {...post} fullPost /> : `Post with id ${postId} not found.`}
+      {post ? (
+        <div>
+          <Post {...post} fullPost />
+          <hr />
+          <PostStats postId={postId} />
+        </div>
+      ) : (
+        `Post with id ${postId} not found.`
+      )}
     </div>
   )
 }
