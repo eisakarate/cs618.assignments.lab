@@ -12,6 +12,19 @@ import bodyParser from 'body-parser'
 
 import cors from 'cors'
 
+//import apollo server
+import { ApolloServer } from '@apollo/server'
+import { expressMiddleware } from '@apollo/server/express4' //used to tie the route (app) to the apollo server
+
+//import graphQL type/resolver
+import { typeDefs, resolvers } from './graphql/index.js'
+
+//setup a new server (apollo server) to host the type and resolvers
+const apolloServer = new ApolloServer({
+  typeDefs,
+  resolvers,
+})
+
 const app = express()
 
 //make the app use the body parser to parse JSON
@@ -39,6 +52,12 @@ app.use(bodyParser.json())
 
 // use the CORS to allow access from other URLs
 app.use(cors())
+
+//start up the apollo server, associate it with a route "/graphql"
+apolloServer
+  .start()
+  .then(() => app.use('/graphql', expressMiddleware(apolloServer)))
+
 //define routes
 postsRouts(app)
 userRoutes(app)

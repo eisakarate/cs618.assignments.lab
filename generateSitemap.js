@@ -4,7 +4,7 @@ dotenv.config()
 
 //uncomment to submit
 const baseUrl = ''
-//const baseUrl = process.env.FRONTEND_URL
+// const baseUrl = process.env.FRONTEND_URL
 
 export async function generateSitemap() {
   const postsRequest = await fetch(`${import.meta.env.VITE_BACKEND_URL}/posts`)
