@@ -3,21 +3,33 @@ import { jwtDecode } from 'jwt-decode'
 import { useAuth } from '../contexts/AuthContext.jsx'
 import { User } from './User.jsx'
 
+import { useQuery } from '@tanstack/react-query'
+import { getUserInfo } from '../api/users.js'
+
 //setup a header link
 export function Header() {
   const [token, setToken] = useAuth() //get the token, if its there
+
+  //get the user information
+  const { sub } = token ? jwtDecode(token) : {}
+  const userInfoQuery = useQuery({
+    queryKey: ['users', sub],
+    queryFn: () => getUserInfo(sub),
+    enabled: Boolean(sub),
+  })
+  const userInfo = userInfoQuery.data
 
   //set the title so that it no longer reads vite+react
   //document.title = 'Corgi Blog Time!'
 
   //if there is a token, then display the logout, then clearout the token
   if (token) {
-    const { sub } = jwtDecode(token) //get the user-id, then nullify the token, then stay on the page
+    //const { sub } = jwtDecode(token) //get the user-id, then nullify the token, then stay on the page
     return (
       <div>
         <h1>Welcome to Corgi Blog</h1>
         <h2>By Potato Dog (a.k.a, pawsome corgi)</h2>
-        Logged in as <User id={sub} />
+        Logged in as <User {...userInfo} />
         &nbsp;|&nbsp;
         <button onClick={() => setToken(null)}>Logout</button>
         <hr />

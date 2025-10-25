@@ -1,0 +1,4 @@
+{
+  "schema": "https://zany-space-eureka-67rqv5jgj67hr4jw-3000.app.github.dev/graphql",
+  "documents": "src/api/graphql/**/*.{js,jsx}"
+}

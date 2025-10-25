@@ -3,8 +3,9 @@ import { CreatePost } from '../components/CreatePost.jsx'
 import { PostFilter } from '../components/PostFilter.jsx'
 import { PostSorting } from '../components/PostSorting.jsx'
 
-import { useQuery } from '@tanstack/react-query'
-import { getPosts } from '../api/posts.js'
+//import graph ql
+import { useQuery as useGraphQLQuery } from '@apollo/client/react/index.js'
+import { GET_POSTS } from '../api/graphql/posts.js'
 
 //for tab title update
 import { Header } from '../components/Header.jsx'
@@ -19,14 +20,8 @@ export function Blog() {
   const [sortBy, setSortBy] = useState('createdAt')
   const [sortOrder, setSortOrder] = useState('descending')
 
-  //define a query
-  const postQuery = useQuery({
-    queryKey: ['posts', { author, sortBy, sortOrder }],
-    queryFn: () => getPosts({ author, sortBy, sortOrder }),
-  })
-
-  //get data
-  const posts = postQuery.data ?? [] //get the result
+  const postsQuery = useGraphQLQuery(GET_POSTS)
+  const posts = postsQuery.data?.posts ?? []
 
   return (
     <div style={{ padding: 8 }}>

@@ -108,7 +108,7 @@ if (action == 'Prod') {
   app2.listen(3000, () => console.log('foo'))
 }
 
-// //read from the Environment Variable
+//read from the Environment Variable
 // if (process.env.NODE_ENV === 'production') {
 //   const app = await createProdServer()
 //   app.listen(process.env.PORT, () =>

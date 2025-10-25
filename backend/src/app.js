@@ -8,6 +8,9 @@ import { postsRouts } from './routes/posts.js'
 import { userRoutes } from './routes/users.js'
 import { eventRoutes } from './routes/events.js'
 
+//import optional authentication
+import { optionalAuth } from './middleware/jwt.js'
+
 import bodyParser from 'body-parser'
 
 import cors from 'cors'
@@ -54,9 +57,17 @@ app.use(bodyParser.json())
 app.use(cors())
 
 //start up the apollo server, associate it with a route "/graphql"
-apolloServer
-  .start()
-  .then(() => app.use('/graphql', expressMiddleware(apolloServer)))
+apolloServer.start().then(() =>
+  app.use(
+    '/graphql',
+    optionalAuth,
+    expressMiddleware(apolloServer, {
+      context: async ({ req }) => {
+        return { auth: req.auth }
+      },
+    }),
+  ),
+)
 
 //define routes
 postsRouts(app)
