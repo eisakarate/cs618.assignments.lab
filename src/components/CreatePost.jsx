@@ -1,9 +1,18 @@
 import { useState } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createPost } from '../api/posts.js'
+
 import { useAuth } from '../contexts/AuthContext'
 import { jwtDecode } from 'jwt-decode'
 import { User } from './User.jsx'
+
+import { Link } from 'react-router-dom'
+import slug from 'slug' //needed for links
+
+import { useMutation as useGraphQLMutation } from '@apollo/client/react/index.js'
+import {
+  CREATE_POST,
+  GET_POSTS,
+  GET_POSTS_BY_AUTHOR,
+} from '../api/graphql/posts.js'
 
 // how to call the Post API?
 //use a mutation (useMutation)
@@ -16,15 +25,11 @@ export function CreatePost() {
   const [title, setTitle] = useState('') //setTitle is an "alias" to "function" that set the state value for title
   //const [author, setAuthor] = useState('')  //we are going to use the Token
   const [contents, setContents] = useState('')
-  const [bibliography, setBibliography] = useState('') //initiialize to empty-string
 
-  const queryClient = useQueryClient()
-  const createPostMutation = useMutation({
-    mutationFn: () => createPost(token, { title, contents, bibliography }), //call the mutate using State, call the API function
-
-    //invalidate the query in the "post"
-    //invalidating the Query makes the underlying data "invalid", and causes the component to requery from the database
-    onSuccess: () => queryClient.invalidateQueries(['posts']),
+  const [createPost, { loading, data }] = useGraphQLMutation(CREATE_POST, {
+    variables: { title, contents },
+    context: { headers: { Authorization: `Bearer ${token}` } },
+    refetchQueries: [GET_POSTS, GET_POSTS_BY_AUTHOR], //refetch after storing
   })
 
   //define a function to submit
@@ -33,7 +38,7 @@ export function CreatePost() {
     e.preventDefault()
 
     //push to the database
-    createPostMutation.mutate() //mutate
+    createPost()
   }
 
   //check for authentication
@@ -60,18 +65,6 @@ export function CreatePost() {
         <label htmlFor='create-author'>Author: </label> <User id={sub} />
       </div>
       <br />
-      <div>
-        <label htmlFor='create-bibliography'>Bibliography: </label>
-        {/* add a field for entering an author */}
-        <input
-          type='text'
-          name='create-bibliography'
-          id='create-bibliography'
-          value={bibliography}
-          onChange={(e) => setBibliography(e.target.value)}
-        />
-      </div>
-      <br />
       <label htmlFor='blog-content'>Blog Content: </label>
       {/* add a field for entering a content? */}
       <textarea
@@ -86,14 +79,20 @@ export function CreatePost() {
       {/* Display correct button text correctly */}
       <input
         type='submit'
-        value={createPostMutation.isPending ? 'Creating...' : 'Create'}
-        disabled={!title || createPostMutation.isPending}
+        value={loading ? 'Creating...' : 'Create'}
+        disabled={!title || loading}
       />
       {/* display a status message */}
-      {createPostMutation.isSuccess ? (
+      {data?.createPost ? (
         <>
           <br />
-          Post created successfully!
+          Post{' '}
+          <Link
+            to={`/posts/${data.createPost.id}/${slug(data.createPost.title)}`}
+          >
+            {data.createPost.title}
+          </Link>{' '}
+          created successfully!
         </>
       ) : null}
     </form>

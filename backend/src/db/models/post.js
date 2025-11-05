@@ -6,7 +6,6 @@ const postSchema = new Schema(
     title: { type: String, required: true },
     author: { type: Schema.Types.ObjectId, ref: 'user', required: true },
     contents: String,
-    bibliography: [String],
     tags: [String],
   },
   //add timestamps (create timestamp and update timestamp)

@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
 import { useNavigate, Link } from 'react-router-dom'
-import { login } from '../api/users.js'
+import { useMutation as useGraphQLMutation } from '@apollo/client/react/index.js'
+import { LOGIN_USER } from '../api/graphql/users.js'
 
 import { useAuth } from '../contexts/AuthContext.jsx'
 
@@ -11,17 +11,17 @@ export function Login() {
   const [password, setPassword] = useState('')
 
   const navigate = useNavigate()
-  const loginMutation = useMutation({
-    mutationFn: () => login({ username, password }), //definte he mutation, call the 'login` method in the `api/users` route
-    onSuccess: (data) => {
-      setToken(data.token) //set the token in the context
+  const [loginUser, { loading }] = useGraphQLMutation(LOGIN_USER, {
+    variables: { username, password },
+    onCompleted: (data) => {
+      setToken(data.loginUser)
       navigate('/')
     },
     onError: () => alert('failed to login!'),
   })
   const handleSubmit = (e) => {
     e.preventDefault()
-    loginMutation.mutate()
+    loginUser()
   }
   return (
     <form onSubmit={handleSubmit}>
@@ -53,8 +53,8 @@ export function Login() {
       <br />
       <input
         type='submit'
-        value={loginMutation.isPending ? 'Logging in...' : 'Login '}
-        disabled={!username || !password || loginMutation.isPending}
+        value={loading ? 'Logging in...' : 'Log In'}
+        disabled={!username || !password || loading}
       />
     </form>
   )

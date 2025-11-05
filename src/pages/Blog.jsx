@@ -5,7 +5,7 @@ import { PostSorting } from '../components/PostSorting.jsx'
 
 //import graph ql
 import { useQuery as useGraphQLQuery } from '@apollo/client/react/index.js'
-import { GET_POSTS } from '../api/graphql/posts.js'
+import { GET_POSTS, GET_POSTS_BY_AUTHOR } from '../api/graphql/posts.js'
 
 //for tab title update
 import { Header } from '../components/Header.jsx'
@@ -20,8 +20,10 @@ export function Blog() {
   const [sortBy, setSortBy] = useState('createdAt')
   const [sortOrder, setSortOrder] = useState('descending')
 
-  const postsQuery = useGraphQLQuery(GET_POSTS)
-  const posts = postsQuery.data?.posts ?? []
+  const postsQuery = useGraphQLQuery(author ? GET_POSTS_BY_AUTHOR : GET_POSTS, {
+    variable: { options: { sortBy, sortOrder } },
+  })
+  const posts = postsQuery.data?.postsByAuthor ?? postsQuery.data?.posts ?? []
 
   return (
     <div style={{ padding: 8 }}>

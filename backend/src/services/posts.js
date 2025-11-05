@@ -8,13 +8,17 @@ export async function createPost(
     title,
     //author, replaced by user-id
     contents,
-    bibliography,
     tags,
   },
 ) {
   console.log(`userId: ${userId}`)
   //set the author to the object
-  const post = new Post({ title, author: userId, contents, bibliography, tags })
+  const post = new Post({
+    title,
+    author: userId,
+    contents,
+    tags,
+  })
   return await post.save()
 }
 
@@ -52,15 +56,11 @@ export async function getPostById(postId) {
 }
 
 //update a post
-export async function updatePost(
-  userId,
-  postId,
-  { title, contents, bibliography, tags },
-) {
+export async function updatePost(userId, postId, { title, contents, tags }) {
   return await Post.findOneAndUpdate(
     { _id: postId, author: userId }, //find the post by PostId and UserId
     {
-      $set: { title, contents, bibliography, tags },
+      $set: { title, contents, tags },
     },
     { new: true },
   )

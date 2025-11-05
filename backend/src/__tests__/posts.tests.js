@@ -132,11 +132,6 @@ describe('Testing creating posts', () => {
     const post = {
       title: 'Hello Corgi!',
       contents: 'Corgis are Potatos with feet.',
-      bibliography: [
-        "You don't need it. You just need me. Every day",
-        'You jut need me.corgi',
-        'Feed the potato, Ed. Always',
-      ],
       tags: ['Awesome', 'Corgi'],
     }
     //create a post
@@ -145,8 +140,6 @@ describe('Testing creating posts', () => {
     expect(createdPost._id).toBeInstanceOf(mongoose.Types.ObjectId)
     //search by the id
     const foundPost = await Post.findById(createdPost._id)
-    console.log(`${createdPost._id}: ${createdPost.bibliography}`)
-    console.log(`${foundPost._id}: ${foundPost.bibliography}`)
     //check to to see if the found item has the same id
     expect(foundPost).toEqual(expect.objectContaining(post))
     //check to make sure that time stamps are dates
