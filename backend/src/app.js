@@ -3,13 +3,16 @@
 import express from 'express'
 //fix for Refused to connect  Content Security Policy directive: "connect-src 'self'
 //import helmet from 'helmet'
-
-import { postsRouts } from './routes/posts.js'
 import { userRoutes } from './routes/users.js'
 
 import bodyParser from 'body-parser'
 
 import cors from 'cors'
+
+// add socket.io and node
+import { createServer } from 'node:http'
+import { Server } from 'socket.io'
+import { handleSocket } from './socket.js'
 
 const app = express()
 
@@ -39,8 +42,17 @@ app.use(bodyParser.json())
 // use the CORS to allow access from other URLs
 app.use(cors())
 //define routes
-postsRouts(app)
 userRoutes(app)
+
+//create new server (module.12)
+//take the app and wrap a socket-layer around it
+const server = createServer(app)
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+  },
+})
+handleSocket(io)
 
 //define a route (root)
 app.get('/', (req, res) => {
@@ -53,4 +65,5 @@ app.get('/posts', (req, res) => {
 })
 
 //make it public
-export { app }
+//export { app }
+export { server as app } // export node-server

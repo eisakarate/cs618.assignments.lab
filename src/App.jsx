@@ -1,8 +1,9 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Blog } from './pages/Blog.jsx'
+import { Chat } from './pages/Chat.jsx'
 import { Signup } from './pages/Singup.jsx'
 import { Login } from './pages/login.jsx'
 import { AuthContextProvider } from './contexts/AuthContext.jsx'
+import { SocketIOContextProvider } from './contexts/SocketIOContext.jsx'
 
 //import router
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
@@ -14,7 +15,7 @@ const queryClient = new QueryClient()
 const router = createBrowserRouter([
   {
     path: '/', //root of the application
-    element: <Blog />, //got othe "blog" component
+    element: <Chat />, //got othe "blog" component
   },
   {
     path: `/signup`, //set the route
@@ -33,7 +34,9 @@ export function App() {
     //call router provider instead of the <blog/> component directly
     <QueryClientProvider client={queryClient}>
       <AuthContextProvider>
-        <RouterProvider router={router} />
+        <SocketIOContextProvider>
+          <RouterProvider router={router} />
+        </SocketIOContextProvider>
       </AuthContextProvider>
     </QueryClientProvider>
   )

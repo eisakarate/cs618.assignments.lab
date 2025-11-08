@@ -1,11 +1,20 @@
 import { Link } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
-import { useAuth } from '../contexts/AuthContext'
 import { User } from './User.jsx'
+
+import { useAuth } from '../contexts/AuthContext'
+import { useSocket } from '../contexts/SocketIOContext.jsx'
 
 //setup a header link
 export function Header() {
   const [token, setToken] = useAuth() //get the token, if its there
+
+  const { socket } = useSocket()
+  //handle logout
+  const handleLogout = () => {
+    socket.disconnect()
+    setToken(null)
+  }
 
   //set the title so that it no longer reads vite+react
   document.title = 'Corgi Blog Time!'
@@ -19,7 +28,7 @@ export function Header() {
         <h2>By Potato Dog (a.k.a, pawsome corgi)</h2>
         Logged in as <User id={sub} />
         &nbsp;|&nbsp;
-        <button onClick={() => setToken(null)}>Logout</button>
+        <button onClick={handleLogout}>Logout</button>
         <hr />
       </div>
     )
